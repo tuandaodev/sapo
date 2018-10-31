@@ -1,0 +1,26 @@
+/* 
+    Created on : Feb 5, 2018, 4:53:08 PM
+    Author     : dmtuan
+*/
+
+#wpwrap {
+      background: #F1F1F1;  
+}
+
+.btn-mypos {
+    display: block;
+    margin-top: 5px;
+}
+
+.btn-mypos-width {
+    width: 80%;
+    margin-top: 10px;
+}
+
+#woocommerce-product-data .hndle label {
+    padding-right: unset !important;
+}
+
+.wp-admin input[type=file] {
+    display: inline;
+}
