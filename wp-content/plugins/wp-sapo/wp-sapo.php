@@ -27,6 +27,8 @@ if (!defined('SAPO_API_SECRET'))       define('SAPO_API_SECRET', '8aec934594b64c
 
 require_once('autoload.php');
 
+register_activation_hook(__FILE__, 'sapo_ip_create_db');
+
 add_action('plugins_loaded', 'kiotviet_tools_plugin_init');
 
 function kiotviet_tools_plugin_init() {
@@ -238,6 +240,18 @@ class Sapo_Ninja {
         $data['billing_address']['address1'] = $raw['client_url'];
         $data['billing_address']['phone'] = $raw['client_phone'];
         
+//        $data['source_url'] = $raw['client_url'];
+//        $data['source_identifier'] = $raw['client_url'];
+//        $data['source_name'] = $raw['client_url'];
+//        $data['landing_site'] = $raw['client_url'];
+//        $data['landing_site_ref'] = $raw['client_url'];
+//        $data['referring_site'] = $raw['client_url'];
+//        $data['reference'] = $raw['client_url'];
+        
+        if (isset($raw['note']) && !empty($raw['note'])) {
+            $data['note'] = $raw['note'];
+        }
+        
         $return['order'] = $data;
         
         return $return;
@@ -257,7 +271,17 @@ class Sapo_Ninja {
     }
 
     public function process_wp_sapo($raw) {
+    
         $data = $this->parse_data($raw);
+        
+        $dbModel = new DbModel();
+        $ip = get_client_ip();
+        $check_ip = $dbModel->check_ip($ip);
+        $dbModel->insert_ip($ip);
+        if (!empty($check_ip)) {
+            $data['note'] = "Khách hàng đã đặt đơn hàng trước đây vào lúc " . $check_ip['created'];
+        }
+        
         $converted_data = $this->build_order_json($data);
         
         if (!empty($converted_data)) {

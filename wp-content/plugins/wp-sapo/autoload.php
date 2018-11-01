@@ -8,3 +8,5 @@
 
 require_once 'includes/helper.php';
 require_once('includes/sapo_api.php');
+require_once('includes/plugin_db_init.php');
+require_once('includes/DbModel.php');
