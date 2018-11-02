@@ -237,10 +237,10 @@ class Sapo_Ninja {
         $data['financial_status'] = 'pending';
         $data['billing_address']['first_name'] = $raw['client_name'];
         $data['billing_address']['last_name'] = "";
-        $data['billing_address']['address1'] = $raw['client_url'];
+//        $data['billing_address']['address1'] = $raw['client_url'];
         $data['billing_address']['phone'] = $raw['client_phone'];
         
-//        $data['source_url'] = $raw['client_url'];
+        $data['tags'] = $raw['client_url'];
 //        $data['source_identifier'] = $raw['client_url'];
 //        $data['source_name'] = $raw['client_url'];
 //        $data['landing_site'] = $raw['client_url'];
@@ -279,7 +279,10 @@ class Sapo_Ninja {
         $check_ip = $dbModel->check_ip($ip);
         $dbModel->insert_ip($ip);
         if (!empty($check_ip)) {
-            $data['note'] = "Khách hàng đã đặt đơn hàng trước đây vào lúc " . $check_ip['created'];
+            //2018-11-02 07:09:33
+            $date = DateTime::createFromFormat('Y-m-d H:i:s', $check_ip['created']);
+            $str_time = $date->format('d-m-Y H:i:s');
+            $data['note'] = "IP: $ip đã đặt đơn hàng trước đây vào lúc " . $str_time;
         }
         
         $converted_data = $this->build_order_json($data);
