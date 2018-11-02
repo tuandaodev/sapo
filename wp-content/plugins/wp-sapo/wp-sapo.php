@@ -48,12 +48,11 @@ function sapo_tools_admin_menu() {
     add_menu_page('SAPO Tools', 'SAPO Tools', 'edit_posts', 'sapo-tools', 'function_mypos_options_page', 'dashicons-admin-multisite', 4);
     add_submenu_page('sapo-tools', __('SAPO Tools'), __('SAPO Tools'), 'edit_posts', 'sapo-tools');
     add_submenu_page('sapo-tools', __('Nhập mã sản phẩm'), __('Nhập mã sản phẩm'), 'edit_posts', 'setup-sapo-sku', 'function_setup_sapo_sku');
-    add_submenu_page('sapo-tools', __('Testing'), __('Testing'), 'manage_options', 'sapo-testing', 'function_testing_page');
 }
 
 function function_mypos_options_page() {
     
-    load_assets_page_options();
+    load_assets_common_admin();
     
     echo '<div class="wrap"><div class="row">
                 <div class="col-lg-6">
@@ -124,7 +123,7 @@ function function_setup_sapo_sku() {
     
     set_time_limit(600);
     
-    load_assets_match_sku();
+    load_assets_common_admin();
     
     $kv_api = new Sapo_API();
     
@@ -203,10 +202,6 @@ function check_id_matched_sku($id, $sku) {
         }
     }
     return $check;
-}
-
-function function_testing_page() {
-    build_order_json();
 }
 
 class Sapo_Ninja {
