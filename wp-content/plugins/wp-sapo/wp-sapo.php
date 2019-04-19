@@ -236,12 +236,6 @@ class Sapo_Ninja {
         $data['billing_address']['phone'] = $raw['client_phone'];
         
         $data['tags'] = $raw['client_url'];
-//        $data['source_identifier'] = $raw['client_url'];
-//        $data['source_name'] = $raw['client_url'];
-//        $data['landing_site'] = $raw['client_url'];
-//        $data['landing_site_ref'] = $raw['client_url'];
-//        $data['referring_site'] = $raw['client_url'];
-//        $data['reference'] = $raw['client_url'];
         
         if (isset($raw['note']) && !empty($raw['note'])) {
             $data['note'] = $raw['note'];
@@ -269,23 +263,26 @@ class Sapo_Ninja {
     
         $data = $this->parse_data($raw);
         
-        $dbModel = new DbModel();
-        $ip = get_client_ip();
-        $check_ip = $dbModel->check_ip($ip);
-        $dbModel->insert_ip($ip);
-        if (!empty($check_ip)) {
-            //2018-11-02 07:09:33
-            $date = DateTime::createFromFormat('Y-m-d H:i:s', $check_ip['created']);
-            $str_time = $date->format('d-m-Y H:i:s');
-            $data['note'] = "IP: $ip đã đặt đơn hàng trước đây vào lúc " . $str_time;
+        if (isset($data['client_phone']) && !empty($data['client_phone'])) {
+            $dbModel = new DbModel();
+            $ip = get_client_ip();
+            $check_ip = $dbModel->check_ip($ip);
+            $dbModel->insert_ip($ip);
+            if (!empty($check_ip)) {
+                //2018-11-02 07:09:33
+                $date = DateTime::createFromFormat('Y-m-d H:i:s', $check_ip['created']);
+                $str_time = $date->format('d-m-Y H:i:s');
+                $data['note'] = "IP: $ip đã đặt đơn hàng trước đây vào lúc " . $str_time;
+            }
+
+            $converted_data = $this->build_order_json($data);
+
+            if (!empty($converted_data)) {
+                $sapo_api = new Sapo_API();
+                $sapo_api->create_order($converted_data);
+            }
         }
         
-        $converted_data = $this->build_order_json($data);
-        
-        if (!empty($converted_data)) {
-            $sapo_api = new Sapo_API();
-            $sapo_api->create_order($converted_data);
-        }
     }
 
 }
